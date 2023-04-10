@@ -1,160 +1,50 @@
 import { useEffect, useState } from "react"
-
 import Products from "../../mocks/products"
+import {  doc, getDoc, getFirestore } from "firebase/firestore"
+import { useParams } from "react-router-dom"
+import ItemCount from "../ItemCount/ItemCount"
+import ItemDetail from "../ItemDetail/ItemDetail"
 
-const ItemDetailContainer = ({id, productID}) => {
+const ItemDetailContainer = ({ productID }) => {
     
     const [product, setProduct] = useState([])
-   
-    useEffect(() => {
-    const product = new Promise((resolve, reject) => {
-        resolve(Products)
-    })
+    
+    let { id } = useParams();
 
-    product
-        .then((response) => {
-            const productSelected = response.find(
-                (product) => product.id == productID 
-            )
-            setProduct(productSelected)
-        })
-        .catch((error) => console.log(error))
-   }, [])
+    useEffect(() => {
+        const db = getFirestore()
+        const itemRef = doc(db, "items", `${ id }`)
+     
+        getDoc(itemRef)
+          .then((snapshot) => {
+            if(snapshot.exists()) {
+             // console.log(snapshot.data())
+              setProduct({ id: snapshot.id, ...snapshot.data() })
+            }
+        }).catch((error) => console.log({error}))
+      }, [])
+    
+
+
+   const imgStyle = {
+    backgroundImage: `url('${ product.img }')`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize:"cover",
+    width: "450px",
+    height: "450px",
+    margin: "0 auto"
+  };
+
 
 
   return (
-    <div className='justify-content-center'>
-
-        <div className="card m-5" >
-            <img className="card-img-top" src={product.img} alt="Card image cap" />
-                <div className="card-body">
-                <h5 className="card-title text-center"> {product.name }</h5>
-                <ul className="list-group">
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Precio </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.price}</p>
-                                    </div>
-                            </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Marca </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.marca}</p>
-                                    </div>
-                            </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Color </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.color}</p>
-                                    </div>
-                            </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Categoria </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.category}</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Procesador </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.procesador}</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Grafica </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.grafica}</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Sistema </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.sistema}</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Teclado </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.teclado}</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Resolucion </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.resolucion}</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Procesador </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.pantalla}</p>
-                            </div>
-                        </div>
-                    </li><li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Disco </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.disco}</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div className="row">
-                            <div className="col">
-                                <p> Redes </p>
-                            </div>
-                            <div className="col">
-                                <p class="card-text"> {product.redes}</p>
-                            </div>
-                        </div>
-                    </li>
-                    
-                </ul>
-            </div>
-        </div>
-
+    <div className="container "> 
+        
+        <ItemDetail product={ product } descripcion={true} detalle={true} />
+        
+        
     </div>
+    
   )
 }
 

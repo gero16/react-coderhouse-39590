@@ -1,9 +1,15 @@
-import CartWidget from "../CardWidget/CartWidget"
+import CartWidget from "../CartWidget/CartWidget"
 import logo from "../../assets/logito.jpg"
 import { NavLink } from "react-router-dom"
+import { useState } from "react";
 
 
-const NavBar = ({isCategory, setIsCategory,}) => {
+const NavBar = ({ isCategory, setIsCategory }) => {
+    const [show, setShow] = useState(false);
+ 
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     return (
         <nav className="d-flex justify-content-between align-items-center">
             
@@ -13,27 +19,27 @@ const NavBar = ({isCategory, setIsCategory,}) => {
    
             <ul className="d-flex flex-row">
                 <li className="p-2">
-                    <NavLink to="/category/celulares">
-                        <a href="#">Celulares</a>
+                    <NavLink to="/categories/celulares">
+                        Celulares
                     </NavLink>
                 </li>
                 <li className="p-2">
-                    <NavLink to="/category/notebooks">
-                        <a href="#">Notebooks</a>
+                    <NavLink to="/categories/notebooks">
+                      Notebooks
                     </NavLink>
                 </li>
                 <li className="p-2">
-                    <NavLink to="/category/PC">
-                        <a href="#">PCs</a>
+                    <NavLink to="/categories/PC">
+                    PCs
                     </NavLink>
                 </li>
                  <li className="p-2">
-                    <NavLink to="/category/tablets">
-                        <a href="#">Tablets</a>
+                    <NavLink to="/categories/tablets">
+                     Tablets
                     </NavLink>
                 </li>
-                <li >
-                    <CartWidget />
+                <li>
+                    <CartWidget show={ show } handleClose={ handleClose } handleShow={ handleShow }/>
                 </li>
             </ul>
 

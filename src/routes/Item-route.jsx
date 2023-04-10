@@ -4,7 +4,8 @@ import NavBar from '../components/NavBar/NavBar'
 import ItemDetailContainer from '../components/ItemDetailContainer/ItemDetailContainer';
 import { NavLink, useParams } from 'react-router-dom';
 
-function Item() {
+
+const Item = ()=> {
 
   let { id } = useParams();
 
@@ -12,8 +13,7 @@ function Item() {
     <div className="App">
 
       <div className='container'>
-        <NavBar />
-        <ItemDetailContainer productID={id}/> 
+        <ItemDetailContainer productID={ id }/> 
       </div>
 
     </div>

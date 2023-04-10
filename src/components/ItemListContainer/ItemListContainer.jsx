@@ -1,37 +1,46 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
-import Products from "../../mocks/products"
 import ItemList from "../ItemList/ItemList"
+import {  collection, getFirestore, getDocs, query, where } from "firebase/firestore"
+import Cart from "../Cart/Cart"
 
-const ItemListContainer = ({ greeting, category}) => {
+
+
+const ItemListContainer = ({ greeting }) => {
+
     const [products, setProducts] = useState([])
-   
-    let { id } = useParams();
+      const { category } = useParams()
 
-   useEffect(() => {
-    const productsPromise = new Promise((resolve, reject) => {
-        setTimeout(() => resolve(Products), 2000)
-       
-    })
-
-    productsPromise
-        .then((response) => {
-            if(!id) {
-                setProducts(response)
-            } else {
-                const productsFiltered = response.filter(product => product.category === id)
-                setProducts(productsFiltered) 
-            }
-        })
-        .catch((error) => console.log(error))
-   }, [id])
+    useEffect(() => {
+        const db = getFirestore()
+        const itemsCollection = collection(db, "items")
+    
+        if(category) {
+            const queryResult = query(itemsCollection, where("categoria", "==", `${ category }` ))
+          
+            getDocs(queryResult)
+                .then((snapshot) => {
+                    const docs = snapshot.docs
+                    console.log(docs)
+                    setProducts(docs.map((doc) =>({ id: doc.id, ...doc.data() })) )
+                })
+                .catch((error) => console.log({ error }))
+        } else {
+            getDocs(itemsCollection)
+                .then((snapshot) => {
+                    const docs = snapshot.docs
+                    setProducts(docs.map((doc) =>({ id: doc.id, ...doc.data() })) )
+                })
+                .catch((error) => console.log({ error }))
+        }
+    }, [category])
 
     return (
         <>
+            <Cart products={products}> </Cart>
             <h1 className="titulo"> { greeting } </h1>
-
-            <ItemList products={products} /> 
+            <ItemList products={ products } /> 
         </> 
  
     )
